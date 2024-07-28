@@ -41,7 +41,7 @@ loginUser = async (req, res, next) => {
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "5m" }
+      { expiresIn: "10m" }
     );
     // for dummy used directly jwt expiry
     const refreshToken = jwt.sign(
@@ -107,7 +107,7 @@ loginUser = async (req, res, next) => {
     if (!refreshToken) {
       return res.status(403).json({ message: "Token not provided" });
     }
-    if(this.isTokenBlacklisted(refreshToken)){
+    if(isTokenBlacklisted(refreshToken)){
       return res.status(403).json({ message: "Token blacklisted" });
     }
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
@@ -126,10 +126,11 @@ loginUser = async (req, res, next) => {
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "1m" }
+      { expiresIn: "5m" }
     );
     res.status(200).json({ status: "ok", token });
   } catch (e) {
+    console.log(e,'error');
     res.status(500).json({ status: "cannot authorize" });
   }
 };

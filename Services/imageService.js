@@ -6,7 +6,8 @@ const imageUploadService = async (
   lastSegment,
   labels,
   req,
-  path
+  path,
+  fileName
 ) => {
   try {
     const data = await Image.create({
@@ -19,6 +20,7 @@ const imageUploadService = async (
       size: files[key].size,
       label: labels["label" + key.split("image")[1]],
       uploaded_by: req.user.user.id,
+      filename: fileName
     });
     return data;
   } catch (error) {

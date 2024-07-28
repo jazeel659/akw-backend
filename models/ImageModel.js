@@ -10,10 +10,9 @@ const imageSchema=mongoose.Schema({
         uploaded_by:{
             type:String, 
             required:true
-        }
+        },
+        filename: {type:String, required:true},
       
-    // phone: {type:String, required:true},
-    // address: {type:String, required:true},
-    // role: {type:String, required:true, default:'user'}
+    
 })
 module.exports=mongoose.model('Image', imageSchema)

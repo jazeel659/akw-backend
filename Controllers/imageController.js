@@ -23,6 +23,7 @@ const imageUpload = async (req, res) => {
         uploadPath,
         Date.now() + path.extname(files[key].name)
       );
+      const fileName=Date.now() + path.extname(files[key].name)
       const dataInside = await new Promise((resolve, reject) => {
         files[key].mv(filePath, (err) => {
           if (err) return reject(err);
@@ -39,7 +40,8 @@ const imageUpload = async (req, res) => {
         lastSegment,
         labels,
         req,
-        path
+        path,
+        fileName
       );
       uploadedFiles.push(data);
     }
@@ -67,9 +69,8 @@ const getImages = async (req, res) => {
 };
 
 const getImage = async (req, res) => {
-  res
-    .status(200)
-    .sendFile(path.join(__dirname, "../public", "1722106939133.png"));
+  res.status(200)
+    .sendFile(path.join(__dirname, "../public", req.params.id));
 };
 const deleteImage = async (req, res) => {
   let access = req.user.role.img_delete;

@@ -43,6 +43,7 @@ loginUser = async (req, res, next) => {
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "5m" }
     );
+    // for dummy used directly jwt expiry
     const refreshToken = jwt.sign(
       {
         user: {

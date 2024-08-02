@@ -1,11 +1,12 @@
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
-const { addTokenToBlacklist, isTokenBlacklisted }=require('../tokenBlacklist')
+// const { addTokenToBlacklist, isTokenBlacklisted }=require('../tokenBlacklist')
 
 class UserController {
-  constructor({ userService }) {
-    this.userService = userService;
-    
+  constructor({ userService,addTokenToBlacklist, isTokenBlacklisted }) {
+    this.userService = userService
+    this.addTokenToBlacklist=addTokenToBlacklist
+    this.isTokenBlacklisted=isTokenBlacklisted
   }
 
   
@@ -107,7 +108,7 @@ loginUser = async (req, res, next) => {
     if (!refreshToken) {
       return res.status(403).json({ message: "Token not provided" });
     }
-    if(isTokenBlacklisted(refreshToken)){
+    if(this.isTokenBlacklisted(refreshToken)){
       return res.status(403).json({ message: "Token blacklisted" });
     }
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
@@ -140,8 +141,8 @@ loginUser = async (req, res, next) => {
   try {
 const token =req.body.access_token
     const refreshToken = req.body.refresh_token
-    addTokenToBlacklist(token);
-    addTokenToBlacklist(refreshToken);
+   this.addTokenToBlacklist(token);
+    this.addTokenToBlacklist(refreshToken);
     response.status(200).json({message: 'Sucessfully logged Out',status: 'ok'});
   } catch (error) {
     throw new Error(error.message)

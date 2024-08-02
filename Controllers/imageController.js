@@ -1,11 +1,16 @@
 const path = require("path");
 const fs = require("fs");
-const {
-  imageUploadService,
-  getImageService,
-  deleteImageService,
-} = require("../Services/imageService");
-const imageUpload = async (req, res) => {
+// const {
+//   imageUploadService,
+//   getImageService,
+//   deleteImageService,
+// } = require("../Services/imageService");
+
+class imageController {
+  constructor({ imageService}) {
+    this.imageService = imageService;
+  }
+imageUpload = async (req, res) => {
   try {
     if (!req.files) {
       return res.status(400).json({ message: "No files uploaded" });
@@ -34,7 +39,7 @@ const imageUpload = async (req, res) => {
       console.log(req.user.user.id);
       // Get the last segment from the array
       const lastSegment = segments.pop();
-      data = await imageUploadService(
+      const data = await this.imageService.imageUploadService(
         files,
         key,
         lastSegment,
@@ -53,8 +58,8 @@ const imageUpload = async (req, res) => {
     console.log(error);
     res.status(500).json({ message: "Error uploading files", error });
   }
-};
-const getImages = async (req, res) => {
+}
+getImages = async (req, res) => {
   console.log(req.user.role.img_access);
   if (req.user.role.img_access == null) {
     res.status(200).json({ message: "restrictrd bt admin" });
@@ -64,15 +69,15 @@ const getImages = async (req, res) => {
   req.user.role.img_access == "full"
     ? (options = {})
     : (options = { uploaded_by: req.user.user.id });
-  const images = await getImageService(options);
+  const images = await this.imageService.getImageService(options);
   res.status(200).json({ status: "ok", data: images });
-};
+}
 
-const getImage = async (req, res) => {
+getImage = async (req, res) => {
   res.status(200)
     .sendFile(path.join(__dirname, "../public", req.params.id));
-};
-const deleteImage = async (req, res) => {
+}
+deleteImage = async (req, res) => {
   let access = req.user.role.img_delete;
   let options = { _id: req.body.id };
   if (access == null) {
@@ -83,11 +88,13 @@ const deleteImage = async (req, res) => {
     options.uploaded_by = req.user.user.id;
   }
   try {
-    const data = await deleteImageService(options);
+    const data = await this.imageService.deleteImageService(options);
     res.status(200).json({ status: "ok", message: "deleted" });
   } catch (e) {
     console.log(e);
     res.status(404).json({ message: "filedtodelte" });
   }
-};
-module.exports = { imageUpload, getImages, getImage, deleteImage };
+}
+
+}
+module.exports = imageController

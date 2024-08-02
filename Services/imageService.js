@@ -1,6 +1,10 @@
-const Image = require("../models/ImageModel");
 
-const imageUploadService = async (
+class imageService {
+  constructor({imageModel}) {
+   this.Image = imageModel
+  }
+
+imageUploadService = async (
   files,
   key,
   lastSegment,
@@ -10,7 +14,8 @@ const imageUploadService = async (
   fileName
 ) => {
   try {
-    const data = await Image.create({
+    
+    const data = await this.Image.create({
       filename: files[key].name,
       path: path.join(
         `http://localhost:${process.env.port}/static`,
@@ -21,7 +26,8 @@ const imageUploadService = async (
       label: labels["label" + key.split("image")[1]],
       uploaded_by: req.user.user.id,
       filename: fileName
-    });
+    })
+    
     return data;
   } catch (error) {
     throw new Error(error);
@@ -30,20 +36,20 @@ const imageUploadService = async (
 
 getImageService = async (options) => {
   try {
-    const images = await Image.find(options);
+    const images = await this.Image.find(options);
 
     return images;
   } catch (error) {
     throw new Error(error);
   }
 };
-const deleteImageService = async (options) => {
+deleteImageService = async (options) => {
   try {
-    const data = await Image.deleteOne(options);
+    const data = await this.Image.deleteOne(options);
     return data;
   } catch (error) {
     throw new Error(error);
   }
 };
-
-module.exports = { imageUploadService, getImageService, deleteImageService };
+}
+module.exports = imageService
